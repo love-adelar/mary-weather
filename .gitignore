@@ -111,3 +111,9 @@ Pipfile.lock
 
 node_mudules
 __pycache__
+
+# environ
+.flaskenv
+
+# pycharm
+.idea
