@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="stylesheet" type=text/css href="{{ url_for('static', filename='style.css') }}">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content>
+	<meta name="author" content>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}}
+    <title>Welcome to Maryweather!</title>
+    {% endif %}
+
+    <meta name="twitter:card" content="marry_weather">
+	<meta name="twitter:site" content="@love_ade1a">
+	<meta name="twitter:title" content="marry weather">
+	<meta name="twitter:description" content="This service shows ....">
+	<meta name="twitter:image" content="#.png">
+	<meta name="twitter:creator" content="@love_ade1a">
+
+	<meta property="og:image" content="#.png" itemprop="thumbnailUrl">
+	<meta property="og:title" content="Mary Weather">
+	<meta property="og:url" content="#">
+	<meta property="og:site_name" content="MaryWeather">
+	<meta property="og:description" content="This service shows....">
+</head>
+<body>
+    <nav>
+		<div class="navbar">
+			<div>
+				<div class="navbar-header">
+					<div class="navbar-header-1">
+						<div class="nh1-logo">
+							<a href="/index">
+								<div class="nh1-h1">
+									<h1>Mary Weather</h1>
+								</div>
+							</a>
+						</div>
+
+					</div>
+					<div class="navbar-header-2">
+						<div class="nh2-search">
+							<input class="nh2-input" type="text" autocapitalize="none" placeholder="검색">
+						</div>
+					</div>
+					<div class="navbar-header-3"></div>
+				</div>
+			</div>
+		</div>
+	</nav>
+<!--<hr>-->
+{% block content %}{% endblock %}
+</body>
+
+</html>
