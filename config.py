@@ -16,7 +16,7 @@ class Config(object):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 1000))
+    port = int(os.environ.get('PORT', 4000))
     print("Using:{}".format(os.environ['APP_SETTINGS']))
     app.debug=True if "-d" in sys.argv else False
     app.run('0.0.0.0', port=port)
