@@ -1,15 +1,30 @@
-from config import Config
 from flask import Flask
-from flask_bootstrap import Bootstrap
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from flask_moment import Moment
+from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.config.from_object(Config)
-bootstrap = Bootstrap(app)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-moment = Moment(app)
+from config import Config
 
-from app import routes, models
+db = SQLAlchemy()
+migrate = Migrate()
+
+
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+
+    db.init_app(app)
+    migrate.init_app(app, db)
+
+    from app.errors import bp as errors_bp
+    app.register_blueprint(errors_bp)
+    #
+    # app.config.from_object(os.environ['APP_SETTINGS'])
+    # app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    return app
+
+
+from app import models
+from app.main import routes
+
+
