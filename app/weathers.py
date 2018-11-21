@@ -1,6 +1,6 @@
 import app
 from app import models
-import urllib.requests
+import urllib.request
 import ssl
 from bs4 import BeautifulSoup
 from datetime import datetime
@@ -13,7 +13,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 class WeatherRepository:
     def __init__(self, weather_type):
         self.weather_type = weather_type
-        self.weather = {
+        self.weather_specification = {
             'sunny': '맑음',
             'cloudy_less': '구름조금',
             'cloudy_much': '구름많음',
@@ -40,11 +40,7 @@ class WeatherRepository:
             print("{} 오늘 날씨 \n {}: {}°C, {}, 강수확률 {}%")\
                 .format(row.today, row.meridiem, row.temperature, row.weather_type, row.rain_probability)
 
-    def get_weather(self, end_date=None, duration=365):
-        if end_date is None:
-            end_date = datetime.datetime.now()
-
-        start_date = end_date - datetime.timedelta(duration)
+    def get_weather(self):
         session = models.Session()
 
         url = "https://weather.naver.com/rgn/townWetr.nhn?naverRgnCd=09230109"
@@ -56,13 +52,17 @@ class WeatherRepository:
 
         for cell in weather_type.find_all("div", "cell", limit=2):
             meridiem = cell.find("b").string
+            date = datetime.datetime.strptime(cell[0].txt, "%b %d, %Y")
             temperature = cell.find("span", "temp").string
             weather_type = cell.img['alt']
-            rain_probability = cell.find("strong").string
+            rainfall_probability = cell.find("strong").string
             subject_text += "{}: {}°C, {}, 강수확률 {}%\n".format(meridiem, temperature, weather_type, rain_probability)
 
-            session.merge(models.Weather())
-            # print(subject_text)
+            session.merge(models.Weather(date, today, temperature, weather_type, rainfall_probability, self.weather_specification))
         session.commit()
 
+    def query_data(self, session):
+        return session.query(models.Weather) \
+            .filter(models.Weather.weather_type == self.weather_specification) \
+            .order_by(asc(models.Weather.date))
 

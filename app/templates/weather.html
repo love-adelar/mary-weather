@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div>
+    {% for weather in weathers %}
+    <div>
+        <p>
+            {{ weather.today }} 오늘 {{ weather.meridiem }}의 날씨 :
+            {{ weather.temperature }} °C, {{ weather.weather_type }}, 강수확률 {{ weather.rainfall_probability }} %
+        </p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
