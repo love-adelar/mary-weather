@@ -1,5 +1,5 @@
 import app
-from app import models
+from app import models, db
 import urllib.request
 import ssl
 from bs4 import BeautifulSoup
@@ -32,37 +32,39 @@ class WeatherRepository:
         app.models.create_db()
 
     def print_weather(self):
-        session = models.Session()
+        session = db.session
         for row in session.query(models.Weather) \
-                .filter(models.Weather.weather_type==self.weather_type) \
+                .filter(models.Weather.weather_type == self.weather_type) \
                 .order_by(asc(models.Weather.date)) \
                 .all():
-            print("{} 오늘 날씨 \n {}: {}°C, {}, 강수확률 {}%")\
-                .format(row.today, row.meridiem, row.temperature, row.weather_type, row.rain_probability)
+            print("{} 오늘 날씨 \n {}: {}°C, {}, 강수확률 {}%") \
+                .format(row.date, row.meridiem, row.temperature, row.weather_type, row.rain_probability)
 
-    def get_weather(self):
-        session = models.Session()
+    def retrieve_weather(self):
+        session = db.session
 
         url = "https://weather.naver.com/rgn/townWetr.nhn?naverRgnCd=09230109"
         page = urllib.request.urlopen(url)
         weather_type = BeautifulSoup(page, "html.parser")
 
-        today = datetime.now(pytz.timezone('Asia/Seoul')).strftime("%y년 %m월 %d일")
+        today = datetime.now(pytz.timezone('Asia/Seoul'))
         subject_text = "{} 오늘 날씨\n".format(today)
 
         for cell in weather_type.find_all("div", "cell", limit=2):
             meridiem = cell.find("b").string
-            date = datetime.datetime.strptime(cell[0].txt, "%b %d, %Y")
             temperature = cell.find("span", "temp").string
+
             weather_type = cell.img['alt']
             rainfall_probability = cell.find("strong").string
-            subject_text += "{}: {}°C, {}, 강수확률 {}%\n".format(meridiem, temperature, weather_type, rain_probability)
+            subject_text += "{}: {}°C, {}, 강수확률 {}%\n" \
+                .format(meridiem, temperature, weather_type, rainfall_probability)
+            print(subject_text)
 
-            session.merge(models.Weather(date, today, temperature, weather_type, rainfall_probability, self.weather_specification))
+            session.merge(models.Weather(today, meridiem, temperature,
+                                         weather_type, rainfall_probability))
         session.commit()
 
-    def query_data(self, session):
+    def get_query_data(self, session):
         return session.query(models.Weather) \
             .filter(models.Weather.weather_type == self.weather_specification) \
             .order_by(asc(models.Weather.date))
-
