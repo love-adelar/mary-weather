@@ -91,6 +91,7 @@ myvenv
 ENV
 env.bak
 venv.bak
+.flaskenv
 
 # Spyder project settings
 .spyderproject
@@ -169,4 +170,4 @@ fabric.properties
 *.iml
 *.xml
 
-.idea/
+.idea
